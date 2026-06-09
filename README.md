@@ -6,6 +6,41 @@ Stack:
 - React + Redux + Vite (web SPA)
 - React Native mobile app (planned)
 
+В стадии разработки, чистка кода/ рефакторинг еще не производились
+Проект доведен до следующей функциональности:
+1. Возможность авторизации
+2. Возможность набрать корзину и оформить заказ
+3. Админ панель с возможностью просмотра оформленных покупателями заказов с фильтрацией при необходимиости и возможностью добавлять/удалять/изменять продукты
+
+## Screenshots
+
+<table>
+	<tr>
+		<td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
+		<td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 2"></td>
+	</tr>
+	<tr>
+		<td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 3"></td>
+		<td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 4"></td>
+	</tr>
+	<tr>
+		<td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 5"></td>
+		<td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 6"></td>
+	</tr>
+    <tr>
+		<td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 7"></td>
+		<td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 8"></td>
+	</tr>
+	<tr>
+		<td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 9"></td>
+		<td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 10"></td>
+	</tr>
+</table>
+
+## Manual Tests videos
+
+https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sharing
+
 ## 1) Database
 
 Schema and seed data are in `database/init.sql`.
