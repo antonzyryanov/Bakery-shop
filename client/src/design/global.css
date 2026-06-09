@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Sora:wght@500;700;800&display=swap');
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-black-900);
+  background:
+    radial-gradient(circle at 10% 10%, #ffd9ab 0%, transparent 30%),
+    radial-gradient(circle at 85% 0%, #ffe9cf 0%, transparent 35%),
+    linear-gradient(170deg, #fff8ef 0%, #fff 40%, #f9f9f9 100%);
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: clamp(12px, 1.4vw, 18px) clamp(10px, 1.2vw, 14px);
+  animation: fade-up 600ms var(--ease-soft) both;
+}
+
+.container {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+.surface {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(6px);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-shell {
+    padding: var(--space-md) var(--space-sm);
+  }
+}

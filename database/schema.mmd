@@ -1,0 +1,54 @@
+erDiagram
+    CUSTOMER {
+        varchar id PK
+        varchar email UK
+        enum role
+        varchar password_hash
+        varchar current_order_id UK, FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PRODUCT {
+        varchar id PK
+        varchar name
+        varchar description
+        varchar image_url
+        decimal price
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ORDER {
+        varchar id PK
+        varchar customer_id FK
+        varchar phone_number
+        varchar adress
+        decimal total_price
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CHOSEN_PRODUCT {
+        varchar id PK
+        varchar order_id FK
+        varchar product_id FK
+        int quantity
+        decimal unit_price
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CUSTOMER_DONE_ORDER {
+        varchar customer_id PK, FK
+        varchar order_id PK, FK
+        timestamp completed_at
+    }
+
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--o{ CHOSEN_PRODUCT : includes
+    PRODUCT ||--o{ CHOSEN_PRODUCT : selected_in
+    CUSTOMER ||--o{ CUSTOMER_DONE_ORDER : owns
+    ORDER ||--o| CUSTOMER_DONE_ORDER : completed_as
+    ORDER o|--o| CUSTOMER : current_order_of
