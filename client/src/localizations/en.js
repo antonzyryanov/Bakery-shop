@@ -7,6 +7,7 @@ const en = {
     cart: 'Cart',
     orders: 'Orders',
     nutrition: 'Nutrition tracker',
+    toMain: 'To Main',
     signOut: 'Sign out',
     signInUp: 'Sign in / Sign up',
     logoAlt: 'Sunny Bakery logo',
@@ -35,7 +36,12 @@ const en = {
     empty: 'Your cart is empty.',
     total: 'Total',
     processing: 'Processing...',
-    placeOrder: 'Place order'
+    placeOrder: 'Place order',
+    orderMadeTitle: 'Order made',
+    orderMadeLead: 'Thanks! Your bakery order is placed.',
+    orderMadeDate: 'Order date',
+    orderMadeItems: 'Ordered products',
+    orderMadeClose: 'Close'
   },
   admin: {
     areaTitle: 'Admin area',
@@ -190,6 +196,7 @@ const en = {
     backToShop: 'Back to shop',
     addDish: 'Add dish',
     addDishTitle: 'Add dish',
+    closeForm: 'Close form',
     dishName: 'Dish name',
     dishPhoto: 'Dish photo',
     calories: 'Calories',

@@ -58,9 +58,9 @@ const CustomerOrdersPage = ({ t }) => {
           <h2>{t('orders.pageTitle')}</h2>
           <p>{t('orders.pageSubtitle')}</p>
         </div>
-        <div className="admin-filter-row">
+        <div className="page-toolbar-actions">
           <button className="ghost-btn" type="button" onClick={openChat}>{t('orders.chat')}</button>
-          <Link className="text-link nav-link" to="/">{t('orders.backToShop')}</Link>
+          <Link className="ghost-btn nav-link" to="/">{t('orders.backToShop')}</Link>
         </div>
       </div>
 

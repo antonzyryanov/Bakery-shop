@@ -6,8 +6,12 @@ export const getCache = async (key) => {
     return null;
   }
 
-  const raw = await redis.get(key);
-  return raw ? JSON.parse(raw) : null;
+  try {
+    const raw = await redis.get(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
 };
 
 export const setCache = async (key, value, ttlSeconds = 60) => {
@@ -16,7 +20,11 @@ export const setCache = async (key, value, ttlSeconds = 60) => {
     return;
   }
 
-  await redis.setEx(key, ttlSeconds, JSON.stringify(value));
+  try {
+    await redis.setEx(key, ttlSeconds, JSON.stringify(value));
+  } catch {
+    // Cache is optional; ignore write failures.
+  }
 };
 
 export const deleteCache = async (key) => {
@@ -25,5 +33,9 @@ export const deleteCache = async (key) => {
     return;
   }
 
-  await redis.del(key);
+  try {
+    await redis.del(key);
+  } catch {
+    // Cache is optional; ignore delete failures.
+  }
 };

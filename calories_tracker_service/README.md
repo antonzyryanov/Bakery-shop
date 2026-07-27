@@ -18,6 +18,21 @@ Create PostgreSQL database:
 psql -h localhost -p 5434 -U postgres -f init.sql
 ```
 
+If you already have the old (pre-3NF) schema:
+
+```bash
+psql -h localhost -p 5434 -U postgres -d bakery_nutrition -f migrate_to_3nf.sql
+```
+
+## Schema (3NF)
+
+- `roles` — role lookup (`CUSTOMER`, `ADMIN`)
+- `users` — identity + `role_code` FK (no embedded role descriptors)
+- `dishes` — dish name, image, macros, description
+- `food_entries` — consumption facts only (`user_id`, `dish_id`, `eaten_at`)
+
+API responses stay flat (dish fields are joined/serialized for the Node/React clients).
+
 Run API:
 
 ```bash

@@ -37,3 +37,4 @@ redis/data/
 mysql_data/
 postgres_data/
 server/scripts/.migration-staging/
+scripts/.db-backups/

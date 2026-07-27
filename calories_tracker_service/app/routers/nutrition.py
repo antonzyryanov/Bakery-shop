@@ -2,11 +2,12 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy import and_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
-from app.models import FoodEntry, User
-from app.schemas import FoodEntryCreate, FoodEntryResponse, UserSyncRequest, UserResponse
+from app.models import Dish, FoodEntry, User
+from app.schemas import FoodEntryCreate, FoodEntryResponse, UserSyncRequest
+from app.serializers import serialize_food_entry, serialize_user
 from app.services.stats import build_stats
 from app.tasks import refresh_stats_task, sync_user_task
 
@@ -41,18 +42,19 @@ def parse_range(range_key: str, from_value: str | None, to_value: str | None):
 
 @router.post('/internal/users/sync', dependencies=[Depends(require_internal_key)])
 def sync_user(payload: UserSyncRequest, db: Session = Depends(get_db)):
+    role_code = (payload.role or 'CUSTOMER').strip().upper() or 'CUSTOMER'
     user = db.get(User, payload.id)
     if user:
         user.email = payload.email
-        user.role = payload.role
+        user.role_code = role_code
         user.updated_at = datetime.now(timezone.utc)
     else:
-        user = User(id=payload.id, email=payload.email, role=payload.role)
+        user = User(id=payload.id, email=payload.email, role_code=role_code)
         db.add(user)
     db.commit()
     db.refresh(user)
-    sync_user_task.delay(payload.id, payload.email, payload.role)
-    return {'user': UserResponse.model_validate(user)}
+    sync_user_task.delay(payload.id, payload.email, role_code)
+    return {'user': serialize_user(user)}
 
 
 @router.get('/entries', response_model=list[FoodEntryResponse])
@@ -67,6 +69,7 @@ def list_entries(
     from_dt, to_dt = parse_range(range_key, from_value, to_value)
     stmt = (
         select(FoodEntry)
+        .options(joinedload(FoodEntry.dish))
         .where(
             and_(
                 FoodEntry.user_id == user_id,
@@ -76,8 +79,8 @@ def list_entries(
         )
         .order_by(FoodEntry.eaten_at.desc())
     )
-    entries = db.scalars(stmt).all()
-    return [FoodEntryResponse.model_validate(entry) for entry in entries]
+    entries = db.scalars(stmt).unique().all()
+    return [serialize_food_entry(entry) for entry in entries]
 
 
 @router.post('/entries', response_model=FoodEntryResponse)
@@ -92,25 +95,33 @@ def create_entry(
         raise HTTPException(status_code=404, detail='User not found in nutrition database.')
 
     eaten_at = payload.eaten_at or datetime.now(timezone.utc)
-    entry = FoodEntry(
-        user_id=user_id,
-        dish_name=payload.dish_name.strip(),
+    dish = Dish(
+        created_by_user_id=user_id,
+        name=payload.dish_name.strip(),
+        description=payload.description.strip(),
         image_url=payload.image_url.strip(),
         calories=payload.calories,
         proteins=payload.proteins,
         fats=payload.fats,
         carbohydrates=payload.carbohydrates,
-        description=payload.description.strip(),
+    )
+    entry = FoodEntry(
+        user_id=user_id,
+        dish=dish,
         eaten_at=eaten_at,
     )
+    db.add(dish)
     db.add(entry)
     db.commit()
     db.refresh(entry)
+    entry = db.scalars(
+        select(FoodEntry).options(joinedload(FoodEntry.dish)).where(FoodEntry.id == entry.id)
+    ).unique().one()
 
     from_dt, to_dt = parse_range('last_month', None, None)
     refresh_stats_task.delay(user_id, 'last_month', from_dt.isoformat(), to_dt.isoformat())
 
-    return FoodEntryResponse.model_validate(entry)
+    return serialize_food_entry(entry)
 
 
 @router.get('/stats')

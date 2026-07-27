@@ -40,6 +40,7 @@ export const placeOrder = async ({ customerId, items, phoneNumber, adress }) => 
     normalizedItems.push({
       id: generateId(),
       productId: product.id,
+      productName: product.name,
       quantity,
       unitPrice: Number(product.price)
     });
@@ -62,6 +63,7 @@ export const placeOrder = async ({ customerId, items, phoneNumber, adress }) => 
     id: orderId,
     totalPrice: Number(totalPrice.toFixed(2)),
     status: 'PLACED',
+    createdAt: new Date().toISOString(),
     items: normalizedItems
   };
 };

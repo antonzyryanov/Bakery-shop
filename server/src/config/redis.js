@@ -4,6 +4,17 @@ import { env } from './env.js';
 let redisClient = null;
 let redisWarned = false;
 
+const warnOnce = (message, detail) => {
+  if (redisWarned) {
+    return;
+  }
+  console.warn(message);
+  if (detail) {
+    console.warn('Redis error:', detail);
+  }
+  redisWarned = true;
+};
+
 export const connectRedis = async () => {
   if (!env.redisEnabled || !env.redisUrl) {
     console.log('Redis disabled. Continuing without cache.');
@@ -15,29 +26,35 @@ export const connectRedis = async () => {
     redisClient = createClient({
       url: env.redisUrl,
       socket: {
-        connectTimeout: 2000,
-        reconnectStrategy: () => false
+        connectTimeout: 3000,
+        reconnectStrategy: (retries) => {
+          if (retries > 20) {
+            return false;
+          }
+          return Math.min(retries * 200, 3000);
+        }
       }
     });
 
     redisClient.on('error', (err) => {
-      if (!redisWarned) {
-        console.warn('Redis unavailable. Continuing without cache.');
-        console.warn('Redis error:', err.message);
-        redisWarned = true;
-      }
+      warnOnce('Redis unavailable. Continuing without cache.', err.message);
+    });
+
+    redisClient.on('ready', () => {
+      redisWarned = false;
+      console.log('Redis connected');
     });
 
     await redisClient.connect();
-    console.log('Redis connected');
   } catch (error) {
-    if (!redisWarned) {
-      console.warn('Redis unavailable. Continuing without cache.');
-      console.warn('Redis error:', error.message);
-      redisWarned = true;
-    }
+    warnOnce('Redis unavailable. Continuing without cache.', error.message);
     redisClient = null;
   }
 };
 
-export const getRedisClient = () => redisClient;
+export const getRedisClient = () => {
+  if (!redisClient || !redisClient.isOpen) {
+    return null;
+  }
+  return redisClient;
+};

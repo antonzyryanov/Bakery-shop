@@ -173,11 +173,13 @@ const main = async () => {
     port: Number(process.env.MYSQL_PORT || 3306),
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE || 'bakery_shop'
+    database: process.env.MYSQL_DATABASE || 'bakery_shop',
+    charset: 'utf8mb4'
   };
 
   log('Reading products from local MySQL...');
   const localDb = await mysql.createConnection(localConfig);
+  await localDb.query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
   const [products] = await localDb.execute(
     'SELECT id, name, description, image_url AS imageUrl, price FROM products ORDER BY name ASC'
   );
@@ -218,10 +220,12 @@ const main = async () => {
       user: K8S_MYSQL_USER,
       password: K8S_MYSQL_PASSWORD,
       database: K8S_MYSQL_DATABASE,
+      charset: 'utf8mb4',
       multipleStatements: true
     });
 
     log('Replacing products in Kubernetes MySQL...');
+    await k8sDb.query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
     await k8sDb.beginTransaction();
     await k8sDb.query('SET FOREIGN_KEY_CHECKS = 0');
     await k8sDb.query('DELETE FROM chosen_products');

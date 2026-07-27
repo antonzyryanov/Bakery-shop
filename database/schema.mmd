@@ -64,21 +64,33 @@ erDiagram
     USER {
         varchar id PK
         varchar email UK
-        varchar role
+        varchar role_code FK
         timestamp created_at
         timestamp updated_at
     }
 
-    FOOD_ENTRY {
+    ROLE {
+        varchar code PK
+        varchar name
+    }
+
+    DISH {
         varchar id PK
-        varchar user_id FK
-        varchar dish_name
+        varchar created_by_user_id FK
+        varchar name
+        text description
         varchar image_url
         decimal calories
         decimal proteins
         decimal fats
         decimal carbohydrates
-        text description
+        timestamp created_at
+    }
+
+    FOOD_ENTRY {
+        varchar id PK
+        varchar user_id FK
+        varchar dish_id FK
         timestamp eaten_at
         timestamp created_at
     }
@@ -92,7 +104,10 @@ erDiagram
     CUSTOMER ||--o| CONVERSATION : chats_in
     CONVERSATION ||--o{ MESSAGE : contains
     CUSTOMER ||--o{ MESSAGE : sends
+    ROLE ||--o{ USER : assigns
+    USER ||--o{ DISH : defines
     USER ||--o{ FOOD_ENTRY : logs
+    DISH ||--o{ FOOD_ENTRY : eaten_as
 
     METRIC_EVENT_TYPE {
         int id PK

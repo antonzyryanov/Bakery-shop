@@ -1,12 +1,28 @@
 import { Link } from 'react-router-dom';
 
+const BrandTitle = ({ title }) => {
+  const words = String(title || '').trim().split(/\s+/).filter(Boolean);
+
+  return (
+    <Link className="brand-title-link" to="/">
+      {words.map((word) => (
+        <span className="brand-title-word" key={word}>{word}</span>
+      ))}
+    </Link>
+  );
+};
+
 const Header = ({ onAuthOpen, onCartOpen, user, onLogout, cartCount, t, locale, onLocaleChange }) => (
   <header className="header surface">
     <div className="brand-wrap">
       <div className="brand-top-row">
-        <img className="brand-logo" src="/images/top_logo.png" alt={t('header.logoAlt')} loading="eager" />
+        <Link className="brand-logo-link" to="/" aria-label={t('header.toMain')}>
+          <img className="brand-logo" src="/images/top_logo.png" alt={t('header.logoAlt')} loading="eager" />
+        </Link>
         <div className="brand-text-block">
-          <h1>{t('header.title')}</h1>
+          <h1>
+            <BrandTitle title={t('header.title')} />
+          </h1>
         </div>
       </div>
       <p className="brand-tagline">{t('header.tagline')}</p>
@@ -30,22 +46,24 @@ const Header = ({ onAuthOpen, onCartOpen, user, onLogout, cartCount, t, locale, 
         </button>
       </div>
 
-      <button className="cart-pill" onClick={onCartOpen}>
+      <Link className="ghost-btn nav-link" to="/">{t('header.toMain')}</Link>
+
+      <button className="cart-pill" onClick={onCartOpen} type="button">
         {t('header.cart')} <span>{cartCount}</span>
       </button>
 
       {user ? (
         <>
           {user.role !== 'ADMIN' && (
-            <Link className="ghost-btn nav-link" to="/orders">{t('header.orders')}</Link>
+            <Link className="accent-nav-btn nav-link" to="/orders">{t('header.orders')}</Link>
           )}
           {user.role !== 'ADMIN' && (
-            <Link className="ghost-btn nav-link" to="/nutrition">{t('header.nutrition')}</Link>
+            <Link className="accent-nav-btn nav-link" to="/nutrition">{t('header.nutrition')}</Link>
           )}
-          <button className="ghost-btn" onClick={onLogout}>{t('header.signOut')}</button>
+          <button className="ghost-btn" onClick={onLogout} type="button">{t('header.signOut')}</button>
         </>
       ) : (
-        <button className="ghost-btn" onClick={onAuthOpen}>{t('header.signInUp')}</button>
+        <button className="ghost-btn" onClick={onAuthOpen} type="button">{t('header.signInUp')}</button>
       )}
     </nav>
   </header>

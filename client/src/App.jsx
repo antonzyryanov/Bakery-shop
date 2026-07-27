@@ -5,6 +5,7 @@ import Header from './components/Header.jsx';
 import ProductCard from './components/ProductCard.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
 import AuthModal from './components/AuthModal.jsx';
+import OrderSuccessModal from './components/OrderSuccessModal.jsx';
 import AdminPage from './features/admin/AdminPage.jsx';
 import AdminOrdersPage from './features/admin/AdminOrdersPage.jsx';
 import AdminProductsPage from './features/admin/AdminProductsPage.jsx';
@@ -71,6 +72,7 @@ const App = () => {
   const [isCartOpen, setCartOpen] = useState(false);
   const [isAuthOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('signin');
+  const [orderReceipt, setOrderReceipt] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -178,6 +180,18 @@ const App = () => {
       return;
     }
 
+    const summaryItems = Object.entries(cartItems)
+      .filter(([, quantity]) => quantity > 0)
+      .map(([productId, quantity]) => {
+        const product = productsById[productId];
+        return {
+          productId,
+          productName: product?.name || productId,
+          quantity,
+          unitPrice: Number(product?.price || 0)
+        };
+      });
+
     const action = await dispatch(placeOrder());
     if (!action.error) {
       trackActivity('ORDER_PLACED', {
@@ -185,6 +199,12 @@ const App = () => {
         orderId: action.payload?.id || null
       });
       setCartOpen(false);
+      setOrderReceipt({
+        id: action.payload?.id,
+        totalPrice: action.payload?.totalPrice ?? cartTotal,
+        createdAt: action.payload?.createdAt || new Date().toISOString(),
+        items: action.payload?.items?.length ? action.payload.items : summaryItems
+      });
       navigate('/');
     } else {
       trackActivity('ORDER_FAILED', {
@@ -290,6 +310,13 @@ const App = () => {
         loading={authLoading}
         error={authError}
         fieldErrors={fieldErrors}
+      />
+
+      <OrderSuccessModal
+        t={t}
+        open={Boolean(orderReceipt)}
+        order={orderReceipt}
+        onClose={() => setOrderReceipt(null)}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -32,31 +32,32 @@ const MacroChart = ({ title, buckets, field, color, t }) => {
   );
 };
 
-const AddDishModal = ({ open, onClose, onSubmit, saving, error, t }) => {
-  const [form, setForm] = useState({
-    dishName: '',
-    calories: '',
-    proteins: '',
-    fats: '',
-    carbohydrates: '',
-    description: '',
-    image: null,
-    preview: ''
-  });
+const emptyDishForm = () => ({
+  dishName: '',
+  calories: '',
+  proteins: '',
+  fats: '',
+  carbohydrates: '',
+  description: '',
+  image: null,
+  preview: ''
+});
+
+const AddDishForm = ({ open, onClose, onSubmit, saving, error, t }) => {
+  const sectionRef = useRef(null);
+  const [form, setForm] = useState(emptyDishForm);
 
   useEffect(() => {
     if (!open) {
-      setForm({
-        dishName: '',
-        calories: '',
-        proteins: '',
-        fats: '',
-        carbohydrates: '',
-        description: '',
-        image: null,
-        preview: ''
-      });
+      setForm(emptyDishForm());
+      return undefined;
     }
+
+    const frameId = window.requestAnimationFrame(() => {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
   }, [open]);
 
   const updateField = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -83,14 +84,18 @@ const AddDishModal = ({ open, onClose, onSubmit, saving, error, t }) => {
     onSubmit(payload);
   };
 
-  if (!open) return null;
-
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="auth-modal surface nutrition-form-modal" onClick={(event) => event.stopPropagation()}>
-        <header>
+    <section
+      ref={sectionRef}
+      className={`surface nutrition-add-panel ${open ? 'is-open' : ''}`}
+      aria-hidden={!open}
+    >
+      <div className="nutrition-add-panel-inner">
+        <header className="nutrition-add-panel-head">
           <h2>{t('nutrition.addDishTitle')}</h2>
-          <button className="icon-btn" type="button" onClick={onClose}>×</button>
+          <button className="icon-btn" type="button" onClick={onClose} aria-label={t('nutrition.closeForm')}>
+            ×
+          </button>
         </header>
 
         {error && <p className="error-text">{error}</p>}
@@ -100,31 +105,31 @@ const AddDishModal = ({ open, onClose, onSubmit, saving, error, t }) => {
             value={form.dishName}
             onChange={(event) => updateField('dishName', event.target.value)}
             placeholder={t('nutrition.dishName')}
-            required
+            required={open}
           />
           <label className="nutrition-upload">
             <span>{t('nutrition.dishPhoto')}</span>
-            <input type="file" accept="image/*" onChange={handleImage} required />
+            <input type="file" accept="image/*" onChange={handleImage} required={open} />
             {form.preview ? <img src={form.preview} alt={t('nutrition.dishPhoto')} /> : null}
           </label>
           <div className="nutrition-form-grid">
-            <input type="number" min="0" step="0.1" value={form.calories} onChange={(e) => updateField('calories', e.target.value)} placeholder={t('nutrition.calories')} required />
-            <input type="number" min="0" step="0.1" value={form.proteins} onChange={(e) => updateField('proteins', e.target.value)} placeholder={t('nutrition.proteins')} required />
-            <input type="number" min="0" step="0.1" value={form.fats} onChange={(e) => updateField('fats', e.target.value)} placeholder={t('nutrition.fats')} required />
-            <input type="number" min="0" step="0.1" value={form.carbohydrates} onChange={(e) => updateField('carbohydrates', e.target.value)} placeholder={t('nutrition.carbohydrates')} required />
+            <input type="number" min="0" step="0.1" value={form.calories} onChange={(e) => updateField('calories', e.target.value)} placeholder={t('nutrition.calories')} required={open} />
+            <input type="number" min="0" step="0.1" value={form.proteins} onChange={(e) => updateField('proteins', e.target.value)} placeholder={t('nutrition.proteins')} required={open} />
+            <input type="number" min="0" step="0.1" value={form.fats} onChange={(e) => updateField('fats', e.target.value)} placeholder={t('nutrition.fats')} required={open} />
+            <input type="number" min="0" step="0.1" value={form.carbohydrates} onChange={(e) => updateField('carbohydrates', e.target.value)} placeholder={t('nutrition.carbohydrates')} required={open} />
           </div>
           <textarea
             value={form.description}
             onChange={(event) => updateField('description', event.target.value)}
             placeholder={t('nutrition.description')}
-            required
+            required={open}
           />
-          <button className="checkout-btn" type="submit" disabled={saving}>
+          <button className="checkout-btn" type="submit" disabled={saving || !open}>
             {saving ? t('nutrition.saving') : t('nutrition.save')}
           </button>
         </form>
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -187,6 +192,8 @@ const NutritionTrackerPage = ({ t }) => {
     loadData('custom', customFrom, customTo);
   };
 
+  const openAddDish = () => dispatch(setAddOpen(true));
+
   const buckets = stats?.buckets || [];
 
   return (
@@ -196,13 +203,26 @@ const NutritionTrackerPage = ({ t }) => {
           <h2>{t('nutrition.pageTitle')}</h2>
           <p>{t('nutrition.pageSubtitle')}</p>
         </div>
-        <div className="admin-filter-row">
-          <button className="checkout-btn" type="button" onClick={() => dispatch(setAddOpen(true))}>
+        <div className="page-toolbar-actions">
+          <button className="checkout-btn" type="button" onClick={openAddDish}>
             {t('nutrition.addDish')}
           </button>
-          <Link className="text-link nav-link" to="/">{t('nutrition.backToShop')}</Link>
+          <Link className="ghost-btn nav-link" to="/">{t('nutrition.backToShop')}</Link>
         </div>
       </div>
+
+      <AddDishForm
+        open={addOpen}
+        onClose={() => dispatch(setAddOpen(false))}
+        onSubmit={(formData) => dispatch(addNutritionDish(formData)).then((action) => {
+          if (!action.error) {
+            loadData(range, customFrom, customTo);
+          }
+        })}
+        saving={saving}
+        error={error}
+        t={t}
+      />
 
       <div className="surface admin-orders-toolbar">
         <div className="admin-filter-row" role="group" aria-label={t('nutrition.filterLabel')}>
@@ -238,7 +258,7 @@ const NutritionTrackerPage = ({ t }) => {
         {customError && <p className="error-text">{customError}</p>}
       </div>
 
-      {error && <p className="error-text">{error}</p>}
+      {error && !addOpen && <p className="error-text">{error}</p>}
 
       <div className="nutrition-totals-grid">
         <article className="stat-card surface">
@@ -298,19 +318,6 @@ const NutritionTrackerPage = ({ t }) => {
           </section>
         ))}
       </div>
-
-      <AddDishModal
-        open={addOpen}
-        onClose={() => dispatch(setAddOpen(false))}
-        onSubmit={(formData) => dispatch(addNutritionDish(formData)).then((action) => {
-          if (!action.error) {
-            loadData(range, customFrom, customTo);
-          }
-        })}
-        saving={saving}
-        error={error}
-        t={t}
-      />
     </section>
   );
 };

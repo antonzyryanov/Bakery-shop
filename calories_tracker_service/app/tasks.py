@@ -2,22 +2,25 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from app.celery_app import celery_app
 from app.database import SessionLocal
-from app.models import FoodEntry, User
+from app.models import Dish, FoodEntry, User
+from app.serializers import serialize_food_entry
 from app.services.stats import build_stats
 
 
 def _upsert_user(db, user_id: str, email: str, role: str) -> User:
+    role_code = (role or 'CUSTOMER').strip().upper() or 'CUSTOMER'
     user = db.get(User, user_id)
     if user:
         user.email = email
-        user.role = role
+        user.role_code = role_code
         user.updated_at = datetime.now(timezone.utc)
         return user
 
-    user = User(id=user_id, email=email, role=role)
+    user = User(id=user_id, email=email, role_code=role_code)
     db.add(user)
     return user
 
@@ -47,34 +50,34 @@ def save_food_entry_task(user_id: str, entry_payload: dict):
         elif eaten_at is None:
             eaten_at = datetime.now(timezone.utc)
 
-        entry = FoodEntry(
-            id=entry_payload.get('id') or str(uuid4()),
-            user_id=user_id,
-            dish_name=entry_payload['dish_name'],
+        dish = Dish(
+            id=str(uuid4()),
+            created_by_user_id=user_id,
+            name=entry_payload['dish_name'],
+            description=entry_payload['description'],
             image_url=entry_payload['image_url'],
             calories=entry_payload['calories'],
             proteins=entry_payload['proteins'],
             fats=entry_payload['fats'],
             carbohydrates=entry_payload['carbohydrates'],
-            description=entry_payload['description'],
+        )
+        entry = FoodEntry(
+            id=entry_payload.get('id') or str(uuid4()),
+            user_id=user_id,
+            dish_id=dish.id,
             eaten_at=eaten_at,
         )
+        db.add(dish)
         db.add(entry)
         db.commit()
-        db.refresh(entry)
-        return {
-            'id': entry.id,
-            'user_id': entry.user_id,
-            'dish_name': entry.dish_name,
-            'image_url': entry.image_url,
-            'calories': float(entry.calories),
-            'proteins': float(entry.proteins),
-            'fats': float(entry.fats),
-            'carbohydrates': float(entry.carbohydrates),
-            'description': entry.description,
-            'eaten_at': entry.eaten_at.isoformat(),
-            'created_at': entry.created_at.isoformat(),
-        }
+
+        loaded = db.scalars(
+            select(FoodEntry)
+            .options(joinedload(FoodEntry.dish))
+            .where(FoodEntry.id == entry.id)
+        ).unique().one()
+
+        return serialize_food_entry(loaded).model_dump(mode='json')
     finally:
         db.close()
 

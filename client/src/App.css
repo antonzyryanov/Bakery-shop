@@ -13,18 +13,18 @@
 }
 
 .brand-wrap {
-  flex: 1 1 260px;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: min(420px, 42%);
 }
 
 .brand-wrap h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.8vw, 2.35rem);
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.15;
-  white-space: nowrap;
+  line-height: 1.05;
 }
 
 .brand-top-row {
@@ -65,6 +65,39 @@
   transform: translateZ(0);
 }
 
+.brand-logo-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  transition: transform 220ms var(--ease-soft);
+}
+
+.brand-logo-link:hover,
+.brand-logo-link:focus-visible {
+  transform: scale(1.03);
+  outline: none;
+}
+
+.brand-title-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-title-word {
+  display: block;
+  line-height: 1.05;
+}
+
+.brand-title-link:hover,
+.brand-title-link:focus-visible {
+  color: var(--color-orange-700);
+  outline: none;
+}
+
 .brand-tagline {
   margin: 8px 0 0;
   font-size: clamp(0.95rem, 1.6vw, 1.2rem);
@@ -78,8 +111,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex: 1 1 320px;
-  flex-wrap: wrap;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   gap: 8px;
   min-width: 0;
   max-width: 100%;
@@ -135,11 +168,40 @@
 
 .ghost-btn {
   background: #fff;
+  border: 1px solid var(--color-gray-300);
   border-radius: 100px;
   padding: 10px 14px;
   font-size: 0.92rem;
   font-weight: 800;
   white-space: nowrap;
+  color: var(--color-black-700);
+}
+
+.accent-nav-btn {
+  background: var(--color-orange-500);
+  border: 1px solid var(--color-orange-600);
+  color: var(--color-white);
+  border-radius: 100px;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 180ms var(--ease-soft), transform 180ms var(--ease-soft);
+}
+
+.accent-nav-btn:hover,
+.accent-nav-btn:focus-visible {
+  background: var(--color-orange-600);
+  outline: none;
+}
+
+.accent-nav-btn:active {
+  background: var(--color-orange-700);
+  transform: translateY(1px);
 }
 
 .cart-pill {
@@ -766,6 +828,10 @@
     flex-wrap: wrap;
   }
 
+  .brand-wrap {
+    max-width: 100%;
+  }
+
   .lang-toggle {
     order: -1;
   }
@@ -827,11 +893,31 @@
   color: #8c1c1c;
 }
 
-a.ghost-btn {
+a.ghost-btn,
+a.accent-nav-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  color: inherit;
+}
+
+a.accent-nav-btn {
+  color: var(--color-white);
+}
+
+.page-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.page-toolbar-actions .ghost-btn,
+.page-toolbar-actions .checkout-btn,
+.page-toolbar-actions .accent-nav-btn {
+  min-height: 42px;
+  box-sizing: border-box;
 }
 
 .chat-modal {
@@ -1061,20 +1147,78 @@ a.ghost-btn {
   width: min(560px, 100%);
 }
 
+.nutrition-add-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    grid-template-rows 420ms var(--ease-soft),
+    opacity 320ms var(--ease-soft),
+    margin 420ms var(--ease-soft),
+    padding 420ms var(--ease-soft),
+    border-width 420ms var(--ease-soft);
+}
+
+.nutrition-add-panel.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  padding: clamp(22px, 2.8vw, 30px);
+  border-width: 1px;
+  pointer-events: auto;
+  scroll-margin-top: var(--space-lg);
+}
+
+.nutrition-add-panel-inner {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  gap: var(--space-md);
+}
+
+.nutrition-add-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.nutrition-add-panel-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
 .nutrition-form {
   display: grid;
-  gap: 10px;
+  gap: var(--space-sm);
+}
+
+.nutrition-form input,
+.nutrition-form textarea {
+  border: 1px solid var(--color-gray-300);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fff;
+}
+
+.nutrition-form textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 
 .nutrition-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .nutrition-upload {
   display: grid;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .nutrition-upload img {
@@ -1083,6 +1227,73 @@ a.ghost-btn {
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid var(--color-gray-300);
+}
+
+.order-success-modal {
+  width: min(480px, 100%);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.order-success-body {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.order-success-lead {
+  margin: 0;
+  color: var(--color-black-700);
+  line-height: 1.45;
+}
+
+.order-success-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.order-success-meta div,
+.order-success-items {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  background: #fff7ee;
+  border: 1px solid #ffd9ab;
+}
+
+.order-success-meta small,
+.order-success-items > small {
+  color: var(--color-gray-500);
+  font-weight: 700;
+}
+
+.order-success-meta strong {
+  font-size: 1.05rem;
+}
+
+.order-success-items ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.order-success-items li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nutrition-add-panel,
+  .accent-nav-btn,
+  .brand-logo-link {
+    transition: none;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1096,7 +1307,9 @@ a.ghost-btn {
 }
 
 @media (max-width: 640px) {
-  .nutrition-entry-card {
+  .nutrition-entry-card,
+  .nutrition-form-grid,
+  .order-success-meta {
     grid-template-columns: 1fr;
   }
 }

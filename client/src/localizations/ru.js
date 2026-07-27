@@ -7,6 +7,7 @@ const ru = {
     cart: 'Корзина',
     orders: 'Заказы',
     nutrition: 'Трекер питания',
+    toMain: 'На главную',
     signOut: 'Выйти',
     signInUp: 'Вход / Регистрация',
     logoAlt: 'Логотип Солнечная Пекарня',
@@ -35,7 +36,12 @@ const ru = {
     empty: 'Корзина пуста.',
     total: 'Итого',
     processing: 'Обработка...',
-    placeOrder: 'Оформить заказ'
+    placeOrder: 'Оформить заказ',
+    orderMadeTitle: 'Заказ оформлен',
+    orderMadeLead: 'Спасибо! Ваш заказ принят.',
+    orderMadeDate: 'Дата заказа',
+    orderMadeItems: 'Заказанные товары',
+    orderMadeClose: 'Закрыть'
   },
   admin: {
     areaTitle: 'Панель администратора',
@@ -190,6 +196,7 @@ const ru = {
     backToShop: 'В магазин',
     addDish: 'Добавить блюдо',
     addDishTitle: 'Добавить блюдо',
+    closeForm: 'Закрыть форму',
     dishName: 'Название блюда',
     dishPhoto: 'Фото блюда',
     calories: 'Калории',

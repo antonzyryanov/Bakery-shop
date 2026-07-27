@@ -2,6 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import and_, select
+from sqlalchemy.orm import joinedload
 
 from app.models import FoodEntry
 from app.schemas import NutritionStatsResponse, StatsBucket
@@ -16,6 +17,7 @@ def _bucket_label(dt: datetime, range_key: str) -> str:
 def build_stats(db, user_id: str, range_key: str, from_dt: datetime, to_dt: datetime) -> NutritionStatsResponse:
     stmt = (
         select(FoodEntry)
+        .options(joinedload(FoodEntry.dish))
         .where(
             and_(
                 FoodEntry.user_id == user_id,
@@ -25,7 +27,7 @@ def build_stats(db, user_id: str, range_key: str, from_dt: datetime, to_dt: date
         )
         .order_by(FoodEntry.eaten_at.asc())
     )
-    entries = db.scalars(stmt).all()
+    entries = db.scalars(stmt).unique().all()
 
     buckets_map: dict[str, dict] = defaultdict(
         lambda: {
@@ -48,8 +50,9 @@ def build_stats(db, user_id: str, range_key: str, from_dt: datetime, to_dt: date
     for entry in entries:
         label = _bucket_label(entry.eaten_at, range_key)
         bucket = buckets_map[label]
+        dish = entry.dish
         for key in ('calories', 'proteins', 'fats', 'carbohydrates'):
-            value = float(getattr(entry, key))
+            value = float(getattr(dish, key))
             bucket[key] += value
             totals[key] += value
         bucket['entries_count'] += 1
