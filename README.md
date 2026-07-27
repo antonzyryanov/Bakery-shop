@@ -13,12 +13,8 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
 ## Screenshots
 
 <table>
- <tr>
-  <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 17"></td>
- </tr>
+ <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
+ <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 17"></td>
  <tr>
   <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 17"></td>
  </tr>
