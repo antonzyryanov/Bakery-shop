@@ -13,31 +13,25 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
 ## Screenshots
 
 <table>
- <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
- <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 17"></td>
  <tr>
-  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 17"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 17"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 17"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
   <td><img src="screenshots/screenshot_11.jpg" alt="Screenshot 11"></td>
@@ -52,16 +46,12 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
   <td><img src="screenshots/screenshot_16.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_17.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_17.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_18.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_18.jpg" alt="Screenshot 18"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_19.jpg" alt="Screenshot 19"></td>
- </tr>
- <tr>
-  <td><img src="screenshots/screenshot_20.jpg" alt="Screenshot 20"></td>
+  <td><img src="screenshots/screenshot_19.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_20.jpg" alt="Screenshot 16"></td>
  </tr>
 </table>
 
