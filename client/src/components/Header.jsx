@@ -39,6 +39,9 @@ const Header = ({ onAuthOpen, onCartOpen, user, onLogout, cartCount, t, locale, 
           {user.role !== 'ADMIN' && (
             <Link className="ghost-btn nav-link" to="/orders">{t('header.orders')}</Link>
           )}
+          {user.role !== 'ADMIN' && (
+            <Link className="ghost-btn nav-link" to="/nutrition">{t('header.nutrition')}</Link>
+          )}
           <button className="ghost-btn" onClick={onLogout}>{t('header.signOut')}</button>
         </>
       ) : (

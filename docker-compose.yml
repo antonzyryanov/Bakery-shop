@@ -1,0 +1,126 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: bakery-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bakery_shop
+      MYSQL_USER: bakery_app
+      MYSQL_PASSWORD: ChangeMe_BakeryApp_123!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:16
+    container_name: bakery-postgres-nutrition
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Hogwarts20014709Swag???
+      POSTGRES_DB: bakery_nutrition
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./calories_tracker_service/init-docker.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: bakery-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis_data:/data
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  node-api:
+    build:
+      context: ./server
+    container_name: bakery-node-api
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      CLIENT_ORIGIN: http://localhost:4000
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: bakery_app
+      MYSQL_PASSWORD: ChangeMe_BakeryApp_123!
+      MYSQL_DATABASE: bakery_shop
+      JWT_SECRET: replace_with_long_random_secret
+      REDIS_ENABLED: "true"
+      REDIS_URL: redis://redis:6379
+      NUTRITION_API_URL: http://nutrition-api:8000
+      NUTRITION_INTERNAL_KEY: dev-internal-nutrition-key
+    ports:
+      - "4000:4000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nutrition-api:
+        condition: service_started
+    volumes:
+      - ./client/dist:/client/dist:ro
+      - node_uploads:/app/uploads
+
+  nutrition-api:
+    build:
+      context: ./calories_tracker_service
+    container_name: bakery-nutrition-api
+    environment:
+      NUTRITION_DATABASE_URL: postgresql+psycopg2://postgres:Hogwarts20014709Swag%3F%3F%3F@postgres:5432/bakery_nutrition
+      REDIS_URL: redis://redis:6379/1
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      INTERNAL_API_KEY: dev-internal-nutrition-key
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  nutrition-worker:
+    build:
+      context: ./calories_tracker_service
+      dockerfile: Dockerfile.worker
+    container_name: bakery-nutrition-worker
+    environment:
+      NUTRITION_DATABASE_URL: postgresql+psycopg2://postgres:Hogwarts20014709Swag%3F%3F%3F@postgres:5432/bakery_nutrition
+      REDIS_URL: redis://redis:6379/1
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      INTERNAL_API_KEY: dev-internal-nutrition-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nutrition-api:
+        condition: service_started
+
+volumes:
+  mysql_data:
+  postgres_data:
+  redis_data:
+  node_uploads:

@@ -1,6 +1,6 @@
-# Bakery Shop Fullstack App
+# Bakery Shop Fullstack Service
 
-ReactJS SPA with Redux and Vite Web Frontend+ React Native with Expo Mobile+ExpressJS Backend+ MySQL 3NF Database Fullstack App
+Ingress-Nginx Server + Kubernetes with persistent volume + Docker minikube high available cluster with round-robin balancing which contains ReactJS SPA with Redux and Vite Web Frontend + React Native with Expo Mobile+ExpressJS Backend[ with MySQL 3NF Database] + Python Fast API Nutrition Tracker Service [with PostgreSQL 3NF Database]
 
 Manual Tests videos show latest versions of service
 

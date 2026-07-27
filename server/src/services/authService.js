@@ -8,6 +8,7 @@ import {
   findCustomerById
 } from '../repositories/customerRepository.js';
 import { env } from '../config/env.js';
+import { syncNutritionUser } from './nutritionClient.js';
 
 export const bootstrapAdmin = async () => {
   const hash = await bcrypt.hash(env.adminPassword, 10);
@@ -26,6 +27,8 @@ export const registerCustomer = async ({ email, password }) => {
   const customerId = generateId();
 
   await createCustomer({ id: customerId, email, passwordHash });
+
+  await syncNutritionUser({ id: customerId, email, role: 'CUSTOMER' });
 
   return {
     token: signAccessToken({ sub: customerId, email, role: 'CUSTOMER' }),
@@ -48,6 +51,12 @@ export const loginCustomer = async ({ identifier, password }) => {
     error.status = 401;
     throw error;
   }
+
+  await syncNutritionUser({
+    id: customer.id,
+    email: customer.email,
+    role: customer.role
+  });
 
   return {
     token: signAccessToken({ sub: customer.id, email: customer.email, role: customer.role }),

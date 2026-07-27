@@ -953,3 +953,150 @@ a.ghost-btn {
     grid-template-columns: 1fr;
   }
 }
+
+.nutrition-page {
+  display: grid;
+  gap: 16px;
+}
+
+.nutrition-totals-grid,
+.nutrition-charts-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.nutrition-charts-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nutrition-chart-card {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.nutrition-chart-card h3 {
+  margin: 0;
+}
+
+.nutrition-chart-bars {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  min-height: 180px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.nutrition-chart-bar-wrap {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  min-width: 42px;
+  height: 180px;
+  align-content: end;
+}
+
+.nutrition-chart-bar {
+  width: 28px;
+  border-radius: 8px 8px 4px 4px;
+  min-height: 4px;
+}
+
+.nutrition-chart-bar-wrap small {
+  font-size: 0.72rem;
+  color: var(--color-gray-500);
+}
+
+.nutrition-empty-chart {
+  margin: 0;
+  color: var(--color-gray-500);
+}
+
+.nutrition-day-list {
+  display: grid;
+  gap: 14px;
+}
+
+.nutrition-day-card {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.nutrition-entry-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.nutrition-entry-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 14px;
+  padding: 10px;
+  background: #fff;
+}
+
+.nutrition-entry-card img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.nutrition-entry-card h4,
+.nutrition-entry-card p {
+  margin: 0;
+}
+
+.nutrition-entry-card p {
+  color: var(--color-black-700);
+  line-height: 1.4;
+}
+
+.nutrition-form-modal {
+  width: min(560px, 100%);
+}
+
+.nutrition-form {
+  display: grid;
+  gap: 10px;
+}
+
+.nutrition-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.nutrition-upload {
+  display: grid;
+  gap: 8px;
+}
+
+.nutrition-upload img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--color-gray-300);
+}
+
+@media (max-width: 900px) {
+  .nutrition-totals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nutrition-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .nutrition-entry-card {
+    grid-template-columns: 1fr;
+  }
+}

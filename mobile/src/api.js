@@ -26,7 +26,7 @@ export const apiFetch = async (path, options = {}) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  if (options.body && !headers['Content-Type']) {
+  if (options.body && !headers['Content-Type'] && !(typeof FormData !== 'undefined' && options.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
   }
 

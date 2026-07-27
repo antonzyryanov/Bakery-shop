@@ -6,6 +6,7 @@ const en = {
     admin: 'Admin',
     cart: 'Cart',
     orders: 'Orders',
+    nutrition: 'Nutrition tracker',
     signOut: 'Sign out',
     signInUp: 'Sign in / Sign up',
     logoAlt: 'Sunny Bakery logo',
@@ -182,6 +183,35 @@ const en = {
       DONE: 'Done',
       CANCELLED: 'Cancelled'
     }
+  },
+  nutrition: {
+    pageTitle: 'Nutrients tracker',
+    pageSubtitle: 'Log dishes, review macros, and track what you ate each day.',
+    backToShop: 'Back to shop',
+    addDish: 'Add dish',
+    addDishTitle: 'Add dish',
+    dishName: 'Dish name',
+    dishPhoto: 'Dish photo',
+    calories: 'Calories',
+    proteins: 'Proteins',
+    fats: 'Fats',
+    carbohydrates: 'Carbohydrates',
+    description: 'Description',
+    save: 'Save',
+    saving: 'Saving...',
+    loading: 'Loading nutrition data...',
+    emptyTitle: 'No dishes logged yet',
+    emptyHint: 'Tap Add dish to log your first meal.',
+    noChartData: 'No chart data for this period.',
+    filterLabel: 'Nutrition date filter',
+    last_day: 'Last day',
+    last_week: 'Last week',
+    last_month: 'Last month',
+    customRange: 'Custom range',
+    from: 'From',
+    to: 'To',
+    apply: 'Apply',
+    periodValidationError: 'Please select a valid date range.'
   }
 };
 

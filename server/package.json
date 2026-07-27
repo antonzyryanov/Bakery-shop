@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "migrate:products:k8s": "node scripts/migrate-products-to-k8s.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

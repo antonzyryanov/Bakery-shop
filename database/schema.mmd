@@ -25,7 +25,7 @@ erDiagram
         varchar phone_number
         varchar adress
         decimal total_price
-        enum status
+        enum status "PLACED|ACCEPTED|DONE|CANCELLED"
         timestamp created_at
         timestamp updated_at
     }
@@ -61,6 +61,28 @@ erDiagram
         timestamp created_at
     }
 
+    USER {
+        varchar id PK
+        varchar email UK
+        varchar role
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    FOOD_ENTRY {
+        varchar id PK
+        varchar user_id FK
+        varchar dish_name
+        varchar image_url
+        decimal calories
+        decimal proteins
+        decimal fats
+        decimal carbohydrates
+        text description
+        timestamp eaten_at
+        timestamp created_at
+    }
+
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--o{ CHOSEN_PRODUCT : includes
     PRODUCT ||--o{ CHOSEN_PRODUCT : selected_in
@@ -70,6 +92,7 @@ erDiagram
     CUSTOMER ||--o| CONVERSATION : chats_in
     CONVERSATION ||--o{ MESSAGE : contains
     CUSTOMER ||--o{ MESSAGE : sends
+    USER ||--o{ FOOD_ENTRY : logs
 
     METRIC_EVENT_TYPE {
         int id PK

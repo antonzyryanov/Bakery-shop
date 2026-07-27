@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node-api-uploads
+  namespace: bakery-shop
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  # Minikube default StorageClass (standard) provisions this on the single node.
+  # RWO is enough: all node-api replicas schedule on the same Minikube node
+  # and share this volume at /app/uploads.

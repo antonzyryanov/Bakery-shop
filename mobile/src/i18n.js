@@ -40,7 +40,26 @@ const en = {
   statusPLACED: 'Placed',
   statusACCEPTED: 'Accepted',
   statusDONE: 'Done',
-  statusCANCELLED: 'Cancelled'
+  statusCANCELLED: 'Cancelled',
+  nutrition: 'Nutrition',
+  nutritionTitle: 'Nutrients tracker',
+  nutritionSubtitle: 'Log dishes and review your macros.',
+  nutritionLoading: 'Loading nutrition data...',
+  nutritionEmpty: 'No dishes logged yet.',
+  addDish: 'Add dish',
+  dishName: 'Dish name',
+  pickPhoto: 'Pick dish photo',
+  photoSelected: 'Photo selected',
+  calories: 'Calories',
+  proteins: 'Proteins',
+  fats: 'Fats',
+  carbohydrates: 'Carbohydrates',
+  description: 'Description',
+  save: 'Save',
+  saving: 'Saving...',
+  nutrition_last_day: 'Last day',
+  nutrition_last_week: 'Last week',
+  nutrition_last_month: 'Last month'
 };
 
 const ru = {
@@ -85,7 +104,26 @@ const ru = {
   statusPLACED: 'Оформлен',
   statusACCEPTED: 'Принят',
   statusDONE: 'Выполнен',
-  statusCANCELLED: 'Отменён'
+  statusCANCELLED: 'Отменён',
+  nutrition: 'Питание',
+  nutritionTitle: 'Трекер питания',
+  nutritionSubtitle: 'Записывайте блюда и смотрите БЖУ.',
+  nutritionLoading: 'Загрузка данных питания...',
+  nutritionEmpty: 'Блюда ещё не добавлены.',
+  addDish: 'Добавить блюдо',
+  dishName: 'Название блюда',
+  pickPhoto: 'Выбрать фото',
+  photoSelected: 'Фото выбрано',
+  calories: 'Калории',
+  proteins: 'Белки',
+  fats: 'Жиры',
+  carbohydrates: 'Углеводы',
+  description: 'Описание',
+  save: 'Сохранить',
+  saving: 'Сохранение...',
+  nutrition_last_day: 'За день',
+  nutrition_last_week: 'За неделю',
+  nutrition_last_month: 'За месяц'
 };
 
 const dictionaries = { en, ru };

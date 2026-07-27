@@ -17,6 +17,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import securityRoutes from './routes/securityRoutes.js';
 import metricsRoutes from './routes/metricsRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import nutritionRoutes from './routes/nutritionRoutes.js';
 import { hasBearerAuth, isMobileClient } from './middlewares/auth.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 
@@ -40,14 +41,30 @@ const allowedOrigins = new Set(
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
+    crossOriginOpenerPolicy: false,
+    originAgentCluster: false,
     contentSecurityPolicy: false
   })
 );
 
+const isLocalDevOrigin = (origin) => {
+  try {
+    const url = new URL(origin);
+    return ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+  } catch {
+    return false;
+  }
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.has(origin) || env.nodeEnv !== 'production') {
+      if (
+        !origin
+        || allowedOrigins.has(origin)
+        || isLocalDevOrigin(origin)
+        || env.nodeEnv !== 'production'
+      ) {
         return callback(null, true);
       }
 
@@ -102,6 +119,7 @@ app.use('/api/metrics', metricsRoutes);
 app.use('/api/chat', csrfUnlessBearer, chatRoutes);
 app.use('/api/auth', csrfUnlessBearer, authRoutes);
 app.use('/api/orders', csrfUnlessBearer, orderRoutes);
+app.use('/api/nutrition', csrfUnlessBearer, nutritionRoutes);
 app.use('/api/admin', csrfUnlessBearer, adminRoutes);
 
 app.use('/uploads', express.static(uploadsPath));

@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY server/package*.json ./
+RUN npm ci --omit=dev
+
+COPY server/src ./src
+COPY database /database
+RUN mkdir -p uploads/products uploads/nutrition
+
+# SPA already built on host: Express resolves ../../client/dist from /app/src
+COPY client/dist /client/dist
+
+ENV NODE_ENV=production
+EXPOSE 4000
+
+CMD ["node", "src/server.js"]

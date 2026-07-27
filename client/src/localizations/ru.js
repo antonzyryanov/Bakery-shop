@@ -6,6 +6,7 @@ const ru = {
     admin: 'Админ',
     cart: 'Корзина',
     orders: 'Заказы',
+    nutrition: 'Трекер питания',
     signOut: 'Выйти',
     signInUp: 'Вход / Регистрация',
     logoAlt: 'Логотип Солнечная Пекарня',
@@ -182,6 +183,35 @@ const ru = {
       DONE: 'Выполнен',
       CANCELLED: 'Отменён'
     }
+  },
+  nutrition: {
+    pageTitle: 'Трекер питания',
+    pageSubtitle: 'Записывайте блюда, смотрите БЖУ и историю питания по дням.',
+    backToShop: 'В магазин',
+    addDish: 'Добавить блюдо',
+    addDishTitle: 'Добавить блюдо',
+    dishName: 'Название блюда',
+    dishPhoto: 'Фото блюда',
+    calories: 'Калории',
+    proteins: 'Белки',
+    fats: 'Жиры',
+    carbohydrates: 'Углеводы',
+    description: 'Описание',
+    save: 'Сохранить',
+    saving: 'Сохранение...',
+    loading: 'Загрузка данных питания...',
+    emptyTitle: 'Блюда ещё не добавлены',
+    emptyHint: 'Нажмите «Добавить блюдо», чтобы записать первый приём пищи.',
+    noChartData: 'Нет данных для графика за этот период.',
+    filterLabel: 'Фильтр по дате',
+    last_day: 'За день',
+    last_week: 'За неделю',
+    last_month: 'За месяц',
+    customRange: 'Свой период',
+    from: 'С',
+    to: 'По',
+    apply: 'Применить',
+    periodValidationError: 'Выберите корректный период.'
   }
 };
 

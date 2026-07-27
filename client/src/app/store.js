@@ -5,6 +5,7 @@ import cartReducer from '../features/cart/cartSlice.js';
 import adminReducer from '../features/admin/adminSlice.js';
 import metricsReducer from '../features/metrics/metricsSlice.js';
 import customerOrdersReducer from '../features/orders/customerOrdersSlice.js';
+import nutritionReducer from '../features/nutrition/nutritionSlice.js';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     cart: cartReducer,
     admin: adminReducer,
     metrics: metricsReducer,
-    customerOrders: customerOrdersReducer
+    customerOrders: customerOrdersReducer,
+    nutrition: nutritionReducer
   }
 });

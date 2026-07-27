@@ -18,6 +18,8 @@ export const env = {
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL || '1d',
   redisEnabled: (process.env.REDIS_ENABLED || 'true').toLowerCase() === 'true',
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+  nutritionApiUrl: process.env.NUTRITION_API_URL || 'http://127.0.0.1:8000',
+  nutritionInternalKey: process.env.NUTRITION_INTERNAL_KEY || 'dev-internal-nutrition-key',
   adminEmail: process.env.ADMIN_EMAIL || 'admin@bakery.local',
   adminPassword: process.env.ADMIN_PASSWORD || 'Ko1337Bra?'
 };

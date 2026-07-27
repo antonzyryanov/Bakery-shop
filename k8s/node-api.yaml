@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-api
+  namespace: bakery-shop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-api
+  template:
+    metadata:
+      labels:
+        app: node-api
+    spec:
+      containers:
+        - name: node-api
+          image: bakery-node-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+          env:
+            - name: PORT
+              value: "4000"
+            - name: NODE_ENV
+              value: production
+            - name: CLIENT_ORIGIN
+              value: http://127.0.0.1:4000
+            - name: EXTRA_CORS_ORIGINS
+              value: http://localhost:4000,http://127.0.0.1:4000,http://localhost:5173,http://bakery.local,http://192.168.49.2:30080
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: MYSQL_HOST
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: MYSQL_PORT
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: MYSQL_DATABASE
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: REDIS_URL
+            - name: REDIS_ENABLED
+              value: "true"
+            - name: NUTRITION_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: NUTRITION_API_URL
+            - name: NUTRITION_INTERNAL_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: NUTRITION_INTERNAL_KEY
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: bakery-secrets
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bakery-secrets
+                  key: MYSQL_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bakery-secrets
+                  key: JWT_SECRET
+            - name: ADMIN_EMAIL
+              value: admin@bakery.local
+            - name: ADMIN_PASSWORD
+              value: Ko1337Bra?
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: node-api-uploads
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-api
+  namespace: bakery-shop
+spec:
+  selector:
+    app: node-api
+  ports:
+    - port: 4000
+      targetPort: 4000
+      nodePort: 30080
+  type: NodePort

@@ -11,6 +11,7 @@ import AdminProductsPage from './features/admin/AdminProductsPage.jsx';
 import AdminMetricsPage from './features/admin/AdminMetricsPage.jsx';
 import AdminMessagesPage from './features/admin/AdminMessagesPage.jsx';
 import CustomerOrdersPage from './features/orders/CustomerOrdersPage.jsx';
+import NutritionTrackerPage from './features/nutrition/NutritionTrackerPage.jsx';
 import { fetchProducts } from './features/products/productsSlice.js';
 import { decrementItem, incrementItem, placeOrder } from './features/cart/cartSlice.js';
 import { clearAuthError, loadSession, loginUser, logoutUser, registerUser } from './features/auth/authSlice.js';
@@ -240,6 +241,7 @@ const App = () => {
 
       <Routes>
         <Route path="/orders" element={<CustomerOrdersPage t={t} />} />
+        <Route path="/nutrition" element={<NutritionTrackerPage t={t} />} />
         <Route path="/admin/orders" element={<AdminOrdersPage t={t} />} />
         <Route path="/admin/products" element={<AdminProductsPage t={t} />} />
         <Route path="/admin/metrics" element={<AdminMetricsPage t={t} />} />

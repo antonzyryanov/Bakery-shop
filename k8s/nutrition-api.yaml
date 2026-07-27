@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nutrition-api
+  namespace: bakery-shop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nutrition-api
+  template:
+    metadata:
+      labels:
+        app: nutrition-api
+    spec:
+      containers:
+        - name: nutrition-api
+          image: bakery-nutrition-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: NUTRITION_DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: NUTRITION_DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: REDIS_URL
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: CELERY_BROKER_URL
+            - name: CELERY_RESULT_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: CELERY_RESULT_BACKEND
+            - name: INTERNAL_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: bakery-config
+                  key: NUTRITION_INTERNAL_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nutrition-api
+  namespace: bakery-shop
+spec:
+  selector:
+    app: nutrition-api
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

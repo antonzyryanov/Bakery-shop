@@ -17,3 +17,23 @@ mobile/.expo/
 
 # Optional lockfile backups / temp install dirs
 *.tgz
+
+# Python nutrition service
+calories_tracker_service/.env
+calories_tracker_service/.venv/
+calories_tracker_service/**/__pycache__/
+calories_tracker_service/**/*.pyc
+calories_tracker_service/.pytest_cache/
+
+# Environment files
+.env
+server/.env
+calories_tracker_service/.env
+
+# Redis runtime data
+redis/data/
+
+# Docker volumes / local data
+mysql_data/
+postgres_data/
+server/scripts/.migration-staging/

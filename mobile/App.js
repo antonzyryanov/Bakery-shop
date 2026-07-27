@@ -35,6 +35,7 @@ import AuthModal from './src/components/AuthModal';
 import CartModal from './src/components/CartModal';
 import CartIcon from './src/components/CartIcon';
 import OrdersModal from './src/components/OrdersModal';
+import NutritionModal from './src/components/NutritionModal';
 
 const ShopApp = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ const ShopApp = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('signin');
   const [ordersOpen, setOrdersOpen] = useState(false);
+  const [nutritionOpen, setNutritionOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -177,6 +179,11 @@ const ShopApp = () => {
           {user ? (
             <View style={styles.authRow}>
               {user.role !== 'ADMIN' ? (
+                <Pressable style={styles.authChip} onPress={() => setNutritionOpen(true)}>
+                  <Text style={styles.authChipText}>{t('nutrition')}</Text>
+                </Pressable>
+              ) : null}
+              {user.role !== 'ADMIN' ? (
                 <Pressable style={styles.authChip} onPress={() => setOrdersOpen(true)}>
                   <Text style={styles.authChipText}>{t('orders')}</Text>
                 </Pressable>
@@ -286,6 +293,12 @@ const ShopApp = () => {
         <OrdersModal
           visible={ordersOpen}
           onClose={() => setOrdersOpen(false)}
+          t={t}
+        />
+
+        <NutritionModal
+          visible={nutritionOpen}
+          onClose={() => setNutritionOpen(false)}
           t={t}
         />
       </SafeAreaView>

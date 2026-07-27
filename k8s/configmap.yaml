@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bakery-config
+  namespace: bakery-shop
+data:
+  MYSQL_HOST: mysql
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: bakery_shop
+  REDIS_URL: redis://redis:6379
+  NUTRITION_API_URL: http://nutrition-api:8000
+  NUTRITION_INTERNAL_KEY: dev-internal-nutrition-key
+  NUTRITION_DATABASE_URL: postgresql+psycopg2://postgres:Hogwarts20014709Swag%3F%3F%3F@postgres:5432/bakery_nutrition
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/2
