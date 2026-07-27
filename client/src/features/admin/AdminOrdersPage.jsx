@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdminOrders, fetchAdminStats } from './adminSlice.js';
+import { acceptAdminOrder, fetchAdminOrders, fetchAdminStats } from './adminSlice.js';
 import AdminAccessGate from './AdminAccessGate.jsx';
 
 const AdminOrdersPage = ({ t }) => {
@@ -11,7 +11,8 @@ const AdminOrdersPage = ({ t }) => {
     orders,
     ordersRange,
     ordersLoading,
-    ordersError
+    ordersError,
+    acceptingOrderId
   } = useSelector((state) => state.admin);
 
   const [customFrom, setCustomFrom] = useState('');
@@ -167,7 +168,7 @@ const AdminOrdersPage = ({ t }) => {
                       <h3>#{order.id}</h3>
                     </div>
                     <span className={`order-status-badge order-status-${String(order.status || 'unknown').toLowerCase()}`}>
-                      {order.status}
+                      {t(`orders.status.${order.status}`) || order.status}
                     </span>
                   </div>
 
@@ -193,6 +194,17 @@ const AdminOrdersPage = ({ t }) => {
                       <strong>{new Date(order.createdAt).toLocaleString()}</strong>
                     </div>
                   </div>
+
+                  {order.status === 'PLACED' && (
+                    <button
+                      className="checkout-btn order-accept-btn"
+                      type="button"
+                      disabled={acceptingOrderId === order.id}
+                      onClick={() => dispatch(acceptAdminOrder(order.id))}
+                    >
+                      {acceptingOrderId === order.id ? t('admin.acceptingOrder') : t('admin.acceptOrder')}
+                    </button>
+                  )}
                 </article>
               ))
             )}

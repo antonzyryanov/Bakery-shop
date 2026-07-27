@@ -36,7 +36,7 @@ CREATE TABLE orders (
   phone_number VARCHAR(40) NOT NULL DEFAULT '',
   adress VARCHAR(300) NOT NULL DEFAULT '',
   total_price DECIMAL(10,2) NOT NULL DEFAULT 0,
-  status ENUM('PLACED', 'DONE', 'CANCELLED') NOT NULL DEFAULT 'PLACED',
+  status ENUM('PLACED', 'ACCEPTED', 'DONE', 'CANCELLED') NOT NULL DEFAULT 'PLACED',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT chk_total_price CHECK (total_price >= 0),
@@ -77,9 +77,35 @@ CREATE TABLE customer_done_orders (
     ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- One conversation per customer (3NF)
+CREATE TABLE conversations (
+  id VARCHAR(36) NOT NULL PRIMARY KEY,
+  customer_id VARCHAR(36) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT uq_conversations_customer UNIQUE (customer_id),
+  CONSTRAINT fk_conversations_customer FOREIGN KEY (customer_id) REFERENCES customers(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE messages (
+  id VARCHAR(36) NOT NULL PRIMARY KEY,
+  conversation_id VARCHAR(36) NOT NULL,
+  sender_id VARCHAR(36) NOT NULL,
+  body VARCHAR(2000) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_messages_conversation FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_messages_sender FOREIGN KEY (sender_id) REFERENCES customers(id)
+    ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
 CREATE INDEX idx_orders_customer ON orders(customer_id);
 CREATE INDEX idx_chosen_order ON chosen_products(order_id);
 CREATE INDEX idx_chosen_product ON chosen_products(product_id);
+CREATE INDEX idx_messages_conversation_created ON messages(conversation_id, created_at);
+CREATE INDEX idx_conversations_updated ON conversations(updated_at);
+CREATE INDEX idx_orders_status ON orders(status);
 
 INSERT INTO customers (id, email, role, password_hash)
 VALUES ('admin-customer-0001', 'admin@bakery.local', 'ADMIN', 'PENDING_HASH_ON_BOOTSTRAP');

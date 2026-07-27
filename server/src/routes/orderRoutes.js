@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { createOrder, listMyOrders } from '../controllers/orderController.js';
+import { cancelMyOrder, createOrder, listMyOrders } from '../controllers/orderController.js';
 import { requireAuth } from '../middlewares/auth.js';
 import { handleValidation } from '../middlewares/validation.js';
 
@@ -19,5 +19,7 @@ router.post(
 );
 
 router.get('/mine', requireAuth, listMyOrders);
+
+router.post('/:id/cancel', requireAuth, cancelMyOrder);
 
 export default router;

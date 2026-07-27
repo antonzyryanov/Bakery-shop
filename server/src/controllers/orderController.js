@@ -1,4 +1,4 @@
-import { getOrderHistory, placeOrder } from '../services/orderService.js';
+import { getOrderHistory, placeOrder, cancelCustomerOrder } from '../services/orderService.js';
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -19,6 +19,18 @@ export const listMyOrders = async (req, res, next) => {
   try {
     const orders = await getOrderHistory(req.user.sub);
     return res.json({ orders });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const cancelMyOrder = async (req, res, next) => {
+  try {
+    const order = await cancelCustomerOrder({
+      orderId: req.params.id,
+      customerId: req.user.sub
+    });
+    return res.json({ order });
   } catch (error) {
     return next(error);
   }

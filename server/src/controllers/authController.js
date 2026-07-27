@@ -12,7 +12,7 @@ export const register = async (req, res, next) => {
     const { email, password } = req.body;
     const result = await registerCustomer({ email, password });
     res.cookie('access_token', result.token, authCookieOptions);
-    return res.status(201).json({ user: result.user });
+    return res.status(201).json({ user: result.user, token: result.token });
   } catch (error) {
     return next(error);
   }
@@ -23,7 +23,7 @@ export const login = async (req, res, next) => {
     const { identifier, password } = req.body;
     const result = await loginCustomer({ identifier, password });
     res.cookie('access_token', result.token, authCookieOptions);
-    return res.json({ user: result.user });
+    return res.json({ user: result.user, token: result.token });
   } catch (error) {
     return next(error);
   }

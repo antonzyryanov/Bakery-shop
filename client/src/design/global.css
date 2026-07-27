@@ -5,7 +5,12 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  margin: 0;
+  min-height: 100%;
+  background-color: #f9f7f2;
+}
+
 body,
 #root {
   margin: 0;
@@ -15,10 +20,13 @@ body,
 body {
   font-family: var(--font-body);
   color: var(--color-black-900);
-  background:
+  background-color: #f9f7f2;
+  background-image:
     radial-gradient(circle at 10% 10%, #ffd9ab 0%, transparent 30%),
     radial-gradient(circle at 85% 0%, #ffe9cf 0%, transparent 35%),
-    linear-gradient(170deg, #fff8ef 0%, #fff 40%, #f9f9f9 100%);
+    linear-gradient(170deg, #fff8ef 0%, #ffffff 42%, #f9f7f2 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 button,
@@ -29,13 +37,34 @@ textarea {
 
 .page-shell {
   min-height: 100vh;
-  padding: clamp(12px, 1.4vw, 18px) clamp(10px, 1.2vw, 14px);
+  padding:
+    clamp(12px, 1.4vw, 18px)
+    clamp(10px, 1.2vw, 14px)
+    clamp(40px, 6vw, 72px);
+}
+
+.page-shell.is-page-enter {
   animation: fade-up 600ms var(--ease-soft) both;
 }
 
+.page-shell.is-locale-out {
+  animation: locale-fade-out 280ms var(--ease-soft) forwards;
+  pointer-events: none;
+}
+
+.page-shell.is-locale-in {
+  animation: locale-fade-in 520ms var(--ease-soft) forwards;
+  pointer-events: none;
+}
+
 .container {
-  width: min(1200px, 100%);
+  width: min(var(--shop-content-max), 100%);
   margin: 0 auto;
+}
+
+.container.shop-container {
+  width: min(var(--shop-content-max), calc(100% - 2 * var(--card-scale-bleed)));
+  padding-bottom: clamp(24px, 4vw, 48px);
 }
 
 .surface {
@@ -57,8 +86,41 @@ textarea {
   }
 }
 
+@keyframes locale-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.988);
+  }
+}
+
+@keyframes locale-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.988);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-shell.is-page-enter,
+  .page-shell.is-locale-out,
+  .page-shell.is-locale-in {
+    animation: none;
+  }
+}
+
 @media (max-width: 768px) {
   .page-shell {
-    padding: var(--space-md) var(--space-sm);
+    padding:
+      var(--space-md)
+      var(--space-sm)
+      clamp(36px, 8vw, 56px);
   }
 }

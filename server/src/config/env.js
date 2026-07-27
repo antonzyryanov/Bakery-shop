@@ -6,6 +6,7 @@ export const env = {
   port: Number(process.env.PORT || 4000),
   nodeEnv: process.env.NODE_ENV || 'development',
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  extraCorsOrigins: process.env.EXTRA_CORS_ORIGINS || 'http://localhost:8081,http://localhost:19006',
   mysql: {
     host: process.env.MYSQL_HOST || '127.0.0.1',
     port: Number(process.env.MYSQL_PORT || 3306),

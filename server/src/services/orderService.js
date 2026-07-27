@@ -3,7 +3,9 @@ import { getProductById } from '../repositories/productRepository.js';
 import {
   createOrderWithItems,
   getAdminOrdersByRange,
-  getOrderHistoryByCustomer
+  getOrderById,
+  getOrderHistoryByCustomer,
+  updateOrderStatus
 } from '../repositories/orderRepository.js';
 import { addDoneOrder, setCurrentOrderId } from '../repositories/customerRepository.js';
 
@@ -59,6 +61,7 @@ export const placeOrder = async ({ customerId, items, phoneNumber, adress }) => 
   return {
     id: orderId,
     totalPrice: Number(totalPrice.toFixed(2)),
+    status: 'PLACED',
     items: normalizedItems
   };
 };
@@ -66,3 +69,67 @@ export const placeOrder = async ({ customerId, items, phoneNumber, adress }) => 
 export const getOrderHistory = async (customerId) => getOrderHistoryByCustomer(customerId);
 
 export const getAdminOrders = async ({ range, from, to }) => getAdminOrdersByRange({ range, from, to });
+
+export const cancelCustomerOrder = async ({ orderId, customerId }) => {
+  const order = await getOrderById(orderId);
+  if (!order) {
+    const error = new Error('Order not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (order.customerId !== customerId) {
+    const error = new Error('You can only cancel your own orders.');
+    error.status = 403;
+    throw error;
+  }
+
+  if (order.status !== 'PLACED') {
+    const error = new Error('Only orders that are not accepted yet can be cancelled.');
+    error.status = 400;
+    throw error;
+  }
+
+  const updated = await updateOrderStatus({
+    orderId,
+    status: 'CANCELLED',
+    expectedStatus: 'PLACED'
+  });
+
+  if (!updated) {
+    const error = new Error('Order could not be cancelled. It may have been accepted already.');
+    error.status = 409;
+    throw error;
+  }
+
+  return { id: orderId, status: 'CANCELLED' };
+};
+
+export const acceptAdminOrder = async ({ orderId }) => {
+  const order = await getOrderById(orderId);
+  if (!order) {
+    const error = new Error('Order not found.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (order.status !== 'PLACED') {
+    const error = new Error('Only placed orders can be accepted.');
+    error.status = 400;
+    throw error;
+  }
+
+  const updated = await updateOrderStatus({
+    orderId,
+    status: 'ACCEPTED',
+    expectedStatus: 'PLACED'
+  });
+
+  if (!updated) {
+    const error = new Error('Order could not be accepted.');
+    error.status = 409;
+    throw error;
+  }
+
+  return { id: orderId, status: 'ACCEPTED' };
+};

@@ -26,6 +26,42 @@ export const createOrderWithItems = async ({ orderId, customerId, phoneNumber, a
   }
 };
 
+const attachItemsToOrders = async (orders) => {
+  if (!orders.length) {
+    return orders;
+  }
+
+  const ids = orders.map((order) => order.id);
+  const placeholders = ids.map(() => '?').join(',');
+  const [items] = await db.execute(
+    `SELECT cp.order_id AS orderId,
+            cp.product_id AS productId,
+            p.name AS productName,
+            cp.quantity,
+            cp.unit_price AS unitPrice
+     FROM chosen_products cp
+     INNER JOIN products p ON p.id = cp.product_id
+     WHERE cp.order_id IN (${placeholders})
+     ORDER BY p.name ASC`,
+    ids
+  );
+
+  const byOrder = items.reduce((acc, item) => {
+    if (!acc[item.orderId]) {
+      acc[item.orderId] = [];
+    }
+    acc[item.orderId].push(item);
+    return acc;
+  }, {});
+
+  return orders.map((order) => ({
+    ...order,
+    items: byOrder[order.id] || [],
+    canCancel: order.status === 'PLACED',
+    canAccept: order.status === 'PLACED'
+  }));
+};
+
 export const getOrderHistoryByCustomer = async (customerId) => {
   const [rows] = await db.execute(
     `SELECT o.id, o.phone_number AS phoneNumber, o.adress, o.total_price AS totalPrice, o.status, o.created_at AS createdAt
@@ -34,7 +70,7 @@ export const getOrderHistoryByCustomer = async (customerId) => {
      ORDER BY o.created_at DESC`,
     [customerId]
   );
-  return rows;
+  return attachItemsToOrders(rows);
 };
 
 const buildRangeClause = (range) => {
@@ -73,10 +109,29 @@ export const getAdminOrdersByRange = async ({ range, from, to }) => {
      FROM orders o
      INNER JOIN customers c ON c.id = o.customer_id
      WHERE ${whereClause}
-     ORDER BY o.created_at DESC`
-    ,
+     ORDER BY o.created_at DESC`,
     params
   );
 
-  return rows;
+  return attachItemsToOrders(rows);
+};
+
+export const getOrderById = async (orderId) => {
+  const [rows] = await db.execute(
+    `SELECT id, customer_id AS customerId, phone_number AS phoneNumber, adress,
+            total_price AS totalPrice, status, created_at AS createdAt
+     FROM orders
+     WHERE id = ?
+     LIMIT 1`,
+    [orderId]
+  );
+  return rows[0] || null;
+};
+
+export const updateOrderStatus = async ({ orderId, status, expectedStatus }) => {
+  const [result] = await db.execute(
+    'UPDATE orders SET status = ? WHERE id = ? AND status = ?',
+    [status, orderId, expectedStatus]
+  );
+  return result.affectedRows > 0;
 };

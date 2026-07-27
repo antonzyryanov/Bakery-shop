@@ -56,6 +56,12 @@ export const deleteAdminProduct = createAsyncThunk('admin/deleteProduct', async 
   await thunkApi.dispatch(fetchProducts());
 });
 
+export const acceptAdminOrder = createAsyncThunk('admin/acceptOrder', async (orderId, thunkApi) => {
+  const data = await apiFetch(`/api/admin/orders/${orderId}/accept`, { method: 'POST' });
+  thunkApi.dispatch(fetchAdminStats());
+  return data.order;
+});
+
 const adminSlice = createSlice({
   name: 'admin',
   initialState: {
@@ -64,6 +70,7 @@ const adminSlice = createSlice({
     ordersRange: 'last_month',
     ordersLoading: false,
     ordersError: '',
+    acceptingOrderId: '',
     loading: false,
     error: ''
   },
@@ -94,6 +101,21 @@ const adminSlice = createSlice({
       .addCase(fetchAdminOrders.rejected, (state, action) => {
         state.ordersLoading = false;
         state.ordersError = action.error.message || 'Failed to load orders.';
+      })
+      .addCase(acceptAdminOrder.pending, (state, action) => {
+        state.acceptingOrderId = action.meta.arg;
+        state.ordersError = '';
+      })
+      .addCase(acceptAdminOrder.fulfilled, (state, action) => {
+        state.acceptingOrderId = '';
+        const updated = action.payload;
+        state.orders = state.orders.map((order) => (
+          order.id === updated.id ? { ...order, status: updated.status } : order
+        ));
+      })
+      .addCase(acceptAdminOrder.rejected, (state, action) => {
+        state.acceptingOrderId = '';
+        state.ordersError = action.error.message || 'Failed to accept order.';
       });
   }
 });

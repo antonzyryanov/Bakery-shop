@@ -55,6 +55,16 @@ const AdminPage = ({ t }) => {
             <p>{t('admin.ordersSectionDescription')}</p>
             <span className="section-action">{t('admin.openSection')}</span>
           </Link>
+          <Link className="surface admin-section-card" to="/admin/metrics">
+            <h2>{t('admin.metricsSectionTitle')}</h2>
+            <p>{t('admin.metricsSectionDescription')}</p>
+            <span className="section-action">{t('admin.openSection')}</span>
+          </Link>
+          <Link className="surface admin-section-card" to="/admin/messages">
+            <h2>{t('admin.messagesSectionTitle')}</h2>
+            <p>{t('admin.messagesSectionDescription')}</p>
+            <span className="section-action">{t('admin.openSection')}</span>
+          </Link>
         </div>
       </section>
     </AdminAccessGate>

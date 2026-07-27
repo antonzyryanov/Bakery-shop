@@ -1,6 +1,6 @@
 import { getStatistics } from '../services/adminService.js';
 import { createProductItem, deleteProductItem, updateProductItem } from '../services/productService.js';
-import { getAdminOrders } from '../services/orderService.js';
+import { acceptAdminOrder, getAdminOrders } from '../services/orderService.js';
 
 export const stats = async (req, res, next) => {
   try {
@@ -45,6 +45,15 @@ export const listOrders = async (req, res, next) => {
     const to = req.query.to ? String(req.query.to) : '';
     const orders = await getAdminOrders({ range, from, to });
     return res.json({ orders });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const acceptOrder = async (req, res, next) => {
+  try {
+    const order = await acceptAdminOrder({ orderId: req.params.id });
+    return res.json({ order });
   } catch (error) {
     return next(error);
   }

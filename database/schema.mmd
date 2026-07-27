@@ -46,9 +46,72 @@ erDiagram
         timestamp completed_at
     }
 
+    CONVERSATION {
+        varchar id PK
+        varchar customer_id UK, FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MESSAGE {
+        varchar id PK
+        varchar conversation_id FK
+        varchar sender_id FK
+        varchar body
+        timestamp created_at
+    }
+
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--o{ CHOSEN_PRODUCT : includes
     PRODUCT ||--o{ CHOSEN_PRODUCT : selected_in
     CUSTOMER ||--o{ CUSTOMER_DONE_ORDER : owns
     ORDER ||--o| CUSTOMER_DONE_ORDER : completed_as
     ORDER o|--o| CUSTOMER : current_order_of
+    CUSTOMER ||--o| CONVERSATION : chats_in
+    CONVERSATION ||--o{ MESSAGE : contains
+    CUSTOMER ||--o{ MESSAGE : sends
+
+    METRIC_EVENT_TYPE {
+        int id PK
+        varchar code UK
+        varchar name
+        varchar description
+    }
+
+    METRIC_PLATFORM {
+        int id PK
+        varchar code UK
+        varchar name
+    }
+
+    METRIC_PAGE {
+        int id PK
+        varchar code UK
+        varchar name
+    }
+
+    METRIC_EVENT {
+        varchar id PK
+        int event_type_id FK
+        int platform_id FK
+        int page_id FK
+        varchar customer_id FK
+        varchar session_id
+        varchar product_id FK
+        varchar order_id FK
+        timestamp created_at
+    }
+
+    METRIC_EVENT_ATTRIBUTE {
+        varchar event_id PK, FK
+        varchar attr_key PK
+        varchar attr_value
+    }
+
+    METRIC_EVENT_TYPE ||--o{ METRIC_EVENT : classifies
+    METRIC_PLATFORM ||--o{ METRIC_EVENT : sourced_from
+    METRIC_PAGE ||--o{ METRIC_EVENT : occurred_on
+    CUSTOMER ||--o{ METRIC_EVENT : performed_by
+    PRODUCT ||--o{ METRIC_EVENT : related_product
+    ORDER ||--o{ METRIC_EVENT : related_order
+    METRIC_EVENT ||--o{ METRIC_EVENT_ATTRIBUTE : has

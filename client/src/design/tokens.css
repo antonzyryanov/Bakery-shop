@@ -25,6 +25,11 @@
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.09);
   --shadow-card: 0 16px 38px rgba(0, 0, 0, 0.14);
 
+  --shop-content-max: 1200px;
+  /* Matches useViewportCenterScale max (1 + 0.16). ~3-col card overflow per side. */
+  --card-scale-max-delta: 0.16;
+  --card-scale-bleed: 30px;
+
   --ease-out-back: cubic-bezier(0.17, 0.89, 0.32, 1.28);
   --ease-soft: cubic-bezier(0.2, 0.72, 0.2, 1);
 }

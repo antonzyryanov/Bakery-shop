@@ -4,7 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { addProduct, editProduct, listOrders, removeProduct, stats, uploadProductImage } from '../controllers/adminController.js';
+import { addProduct, editProduct, listOrders, acceptOrder, removeProduct, stats, uploadProductImage } from '../controllers/adminController.js';
 import { requireAdmin, requireAuth } from '../middlewares/auth.js';
 import { handleValidation } from '../middlewares/validation.js';
 
@@ -45,6 +45,7 @@ router.use(requireAuth, requireAdmin);
 router.post('/products/upload-image', upload.single('image'), uploadProductImage);
 
 router.get('/stats', stats);
+router.post('/orders/:id/accept', acceptOrder);
 router.get(
   '/orders',
   query('range')

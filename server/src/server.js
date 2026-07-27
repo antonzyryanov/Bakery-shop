@@ -15,8 +15,10 @@ const start = async () => {
     await connectRedis();
     await bootstrapAdmin();
 
-    app.listen(env.port, () => {
-      console.log(`Server running on http://localhost:${env.port}`);
+    app.listen(env.port, '0.0.0.0', () => {
+      console.log(`Server running on http://0.0.0.0:${env.port}`);
+      console.log(`Local:   http://localhost:${env.port}`);
+      console.log('Mobile devices on the same network should use http://<PC-LAN-IP>:4000');
     });
   } catch (error) {
     console.error('Startup failed:', error);

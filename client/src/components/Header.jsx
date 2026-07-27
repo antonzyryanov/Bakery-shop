@@ -30,14 +30,17 @@ const Header = ({ onAuthOpen, onCartOpen, user, onLogout, cartCount, t, locale, 
         </button>
       </div>
 
-      <Link to="/" className="text-link nav-link">{t('header.shop')}</Link>
-
       <button className="cart-pill" onClick={onCartOpen}>
         {t('header.cart')} <span>{cartCount}</span>
       </button>
 
       {user ? (
-        <button className="ghost-btn" onClick={onLogout}>{t('header.signOut')}</button>
+        <>
+          {user.role !== 'ADMIN' && (
+            <Link className="ghost-btn nav-link" to="/orders">{t('header.orders')}</Link>
+          )}
+          <button className="ghost-btn" onClick={onLogout}>{t('header.signOut')}</button>
+        </>
       ) : (
         <button className="ghost-btn" onClick={onAuthOpen}>{t('header.signInUp')}</button>
       )}

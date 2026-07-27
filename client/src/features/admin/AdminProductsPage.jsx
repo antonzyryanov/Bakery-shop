@@ -193,7 +193,19 @@ const AdminProductsPage = ({ t }) => {
                   <td>{product.name}</td>
                   <td>{product.description}</td>
                   <td>${Number(product.price).toFixed(2)}</td>
-                  <td>{product.imageUrl}</td>
+                  <td>
+                    <div className="admin-product-image-cell">
+                      {product.imageUrl ? (
+                        <img
+                          className="admin-product-thumb"
+                          src={product.imageUrl}
+                          alt={product.name}
+                          loading="lazy"
+                        />
+                      ) : null}
+                      <span className="admin-product-image-url">{product.imageUrl || '—'}</span>
+                    </div>
+                  </td>
                   <td>
                     <div className="row-actions">
                       <button className="small-ghost" onClick={() => startEdit(product)}>{t('admin.edit')}</button>

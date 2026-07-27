@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Sunny Bakery",
+    "slug": "sunny-bakery",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF8EF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sunnybakery.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFF8EF"
+      },
+      "package": "com.sunnybakery.app",
+      "usesCleartextTraffic": true
+    },
+    "extra": {
+      "apiBaseUrl": ""
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font"
+    ]
+  }
+}

@@ -1,45 +1,59 @@
 # Bakery Shop Fullstack App
 
-## Screenshots
+ReactJS SPA with Redux and Vite Web Frontend+ React Native with Expo Mobile+ExpressJS Backend+ MySQL 3NF Database Fullstack App
 
-<table>
-	<tr>
-		<td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
-		<td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 2"></td>
-	</tr>
-	<tr>
-		<td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 3"></td>
-		<td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 4"></td>
-	</tr>
-	<tr>
-		<td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 5"></td>
-		<td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 6"></td>
-	</tr>
-    <tr>
-		<td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 7"></td>
-		<td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 8"></td>
-	</tr>
-	<tr>
-		<td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 9"></td>
-		<td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 10"></td>
-	</tr>
-</table>
+Manual Tests videos show latest versions of service
+
+Screenshots of web version show first versions of app
 
 ## Manual Tests videos
 
 https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sharing
 
+## Screenshots
+
+<table>
+ <tr>
+  <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
+  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 2"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 3"></td>
+  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 4"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 5"></td>
+  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 6"></td>
+ </tr>
+    <tr>
+  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 7"></td>
+  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 8"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 9"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 10"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 11"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 12"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 13"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 14"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 15"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 16"></td>
+ </tr>
+</table>
+
+
+
 Stack:
 - MySQL (database)
 - Node.js + Express (backend API)
-- React + Redux + Vite (web SPA)
-- React Native mobile app (planned)
-
-В стадии разработки, чистка кода/ рефакторинг еще не производились
-Проект доведен до следующей функциональности:
-1. Возможность авторизации
-2. Возможность набрать корзину и оформить заказ
-3. Админ панель с возможностью просмотра оформленных покупателями заказов с фильтрацией при необходимиости и возможностью добавлять/удалять/изменять продукты
+- React + Redux + Vite (web SPA Frontend)
+- React Native mobile Expo app
 
 ## 1) Database
 
@@ -68,6 +82,12 @@ If your DB already exists and you only need image URLs, run migration:
 
 ```powershell
 Get-Content "c:\bakery_shop\database\add_product_images.sql" | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
+```
+
+Metrics activity tables (3NF) are created automatically on backend startup via `database/add_metrics_tables.sql`, or can be applied manually:
+
+```powershell
+Get-Content "c:\bakery_shop\database\add_metrics_tables.sql" | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
 ```
 
 ## 2) Backend
@@ -103,6 +123,16 @@ npm test
 
 Vite dev server runs at `http://localhost:5173` and proxies API requests to `http://localhost:4000`.
 
+## 4) Mobile (React Native / Expo)
+
+```powershell
+cd c:\bakery_shop\mobile
+npm install
+npm start
+```
+
+There is no admin UI on mobile. Orders placed from the app appear in web `/admin/orders`. Activity events are logged with `platform=MOBILE` and visible in web `/admin/metrics`.
+
 ## Default Admin Login
 
 - Email/Login: `Admin` via UI means use `admin@bakery.local`
@@ -117,8 +147,9 @@ The backend ensures this admin account exists at startup.
 - Morgan logging
 - Rate limiting + slowdown (DDoS mitigation baseline)
 - Input validation for auth/admin/order requests
-- JWT auth with role-based authorization
+- JWT auth with role-based authorization (cookie for web, Bearer token for mobile)
 - Redis cache for product listing endpoint
+- User activity metrics (3NF MySQL) shared by web and mobile
 
 ## One-Command Bootstrap
 
