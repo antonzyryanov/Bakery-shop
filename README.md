@@ -50,10 +50,13 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
 
 
 Stack:
+- Kubernetes + Minikube for local High Available Cluster with Round Robin load balancing
+- Docker for Containerizing
 - MySQL (database)
 - Node.js + Express (backend API)
 - React + Redux + Vite (web SPA Frontend)
 - React Native mobile Expo app
+- Python + PosrgreSQL for Nutrition Tracker Service
 
 ## 1) Database
 
