@@ -15,23 +15,33 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
 <table>
  <tr>
   <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
-  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 2"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 3"></td>
-  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 4"></td>
+  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 17"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 5"></td>
-  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 6"></td>
- </tr>
-    <tr>
-  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 7"></td>
-  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 8"></td>
+  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 17"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 9"></td>
-  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 10"></td>
+  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 17"></td>
  </tr>
  <tr>
   <td><img src="screenshots/screenshot_11.jpg" alt="Screenshot 11"></td>
@@ -44,6 +54,18 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
  <tr>
   <td><img src="screenshots/screenshot_15.jpg" alt="Screenshot 15"></td>
   <td><img src="screenshots/screenshot_16.jpg" alt="Screenshot 16"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_15.jpg" alt="Screenshot 17"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_15.jpg" alt="Screenshot 18"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_15.jpg" alt="Screenshot 19"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_15.jpg" alt="Screenshot 20"></td>
  </tr>
 </table>
 
@@ -180,3 +202,106 @@ powershell -ExecutionPolicy Bypass -File .\scripts\start-dev.ps1
 ```
 
 Why: `database/init.sql` drops and recreates tables, so running bootstrap without `-SkipDbInit` will reset data.
+
+## 5) Minikube HA cluster (2× Node API + 2× Nutrition API)
+
+The Kubernetes stack runs:
+
+| Deployment | Replicas | Role |
+|------------|----------|------|
+| `node-api` | 2 | Express API + React SPA |
+| `nutrition-api` | 2 | FastAPI nutrition service |
+| `nutrition-worker` | 2 | Celery workers |
+| mysql / postgres / redis | 1 each | Persistent data + queues |
+
+Kubernetes Services distribute traffic across Ready pods (**round-robin** / kube-proxy load balancing).
+
+### Prerequisites
+
+- Docker Desktop running
+- Minikube + kubectl on `PATH` (see `k8s/WINDOWS.md`)
+
+### Start / rebuild the cluster
+
+Full start (Minikube + image builds + `kubectl apply`):
+
+```powershell
+cd c:\bakery_shop
+powershell -ExecutionPolicy Bypass -File .\scripts\minikube\start-cluster.ps1
+```
+
+Useful flags:
+
+- `-SkipBuild` — only start Minikube / re-apply manifests
+- `-SkipApply` — only build images into Minikube Docker
+- `-Cpus 2 -MemoryMb 4000` — resource sizing
+
+After start:
+
+```powershell
+kubectl get pods -n bakery-shop
+minikube ip
+# Node API NodePort:      http://<minikube-ip>:30080
+# Nutrition health NodePort: http://<minikube-ip>:30081/health
+
+# Convenient local UI tunnel (does NOT prove round-robin by itself):
+kubectl port-forward -n bakery-shop svc/node-api 4000:4000
+# open http://127.0.0.1:4000
+```
+
+Persistent volumes (`mysql-data`, `postgres-data`, `node-api-uploads`) keep users/orders/nutrition/images across `minikube stop` / `start`. `minikube delete` still wipes volumes.
+
+More detail: `k8s/README.md`, `k8s/WINDOWS.md`.
+
+### Manual test: round-robin load balancing
+
+Health endpoints return the pod name in `instance` so you can see which replica answered:
+
+- Node: `GET /api/health` → `{ "status":"ok", "service":"node-api", "instance":"<pod>" }`
+- Nutrition: `GET /health` → `{ "status":"ok", "service":"nutrition-tracker", "instance":"<pod>" }`
+
+Run:
+
+```powershell
+cd c:\bakery_shop
+powershell -ExecutionPolicy Bypass -File .\scripts\minikube\test-load-balancing.ps1
+# optional: -Requests 40
+```
+
+What the script does:
+
+1. Checks that `node-api` and `nutrition-api` each have **2 Ready** pods
+2. Starts a temporary in-cluster `curl` pod
+3. Sends many requests to each **Service** DNS name (real kube-proxy load balancing)
+4. Reads the `instance` field (pod name) from each response
+5. Prints per-instance hit counts and **PASS** if ≥ 2 distinct instances answered
+
+Why not host NodePort / `kubectl port-forward`?
+- On Minikube **Docker Desktop (Windows)**, `http://<minikube-ip>:30080` is often unreachable from PowerShell.
+- `kubectl port-forward` often sticks to a single backend pod.
+- In-cluster Service DNS is the reliable way to prove round-robin on this setup.
+
+Optional host smoke checks after the script:
+
+```powershell
+$minikubeIp = minikube ip
+Invoke-RestMethod "http://$minikubeIp:30080/api/health"
+Invoke-RestMethod "http://$minikubeIp:30081/health"
+```
+
+### Manual test: high availability
+
+```powershell
+cd c:\bakery_shop
+powershell -ExecutionPolicy Bypass -File .\scripts\minikube\test-high-availability.ps1
+```
+
+What the script does for both `node-api` and `nutrition-api`:
+
+1. Confirms 2 Ready replicas
+2. Deletes **one** pod
+3. Immediately probes the Service health endpoint many times (must mostly stay `200`)
+4. Waits until Kubernetes recreates the replica and both pods are Ready again
+5. Prints **PASS** / **FAIL** per service
+
+Expected outcome: while one replica is down, the Service still serves traffic from the surviving replica; shortly after, replica count returns to 2.
