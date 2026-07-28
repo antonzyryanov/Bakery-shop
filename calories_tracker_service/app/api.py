@@ -1,3 +1,5 @@
+import os
+import socket
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -51,4 +53,8 @@ app.include_router(internal_router)
 
 @app.get('/health')
 def health():
-    return {'status': 'ok', 'service': 'nutrition-tracker'}
+    return {
+        'status': 'ok',
+        'service': 'nutrition-tracker',
+        'instance': os.environ.get('HOSTNAME') or socket.gethostname()
+    }

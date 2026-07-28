@@ -1,5 +1,15 @@
 # Minikube deployment for Bakery Shop (HA + round-robin)
 
+Windows PowerShell automation lives in `scripts/minikube/`:
+
+| Script | Purpose |
+|--------|---------|
+| `start-cluster.ps1` | Start Minikube, build images, apply manifests |
+| `test-load-balancing.ps1` | Prove Service round-robin across 2 replicas (in-cluster curl) |
+| `test-high-availability.ps1` | Kill one replica and verify the Service stays up (in-cluster curl) |
+
+See the root `README.md` section **“5) Minikube HA cluster”** for full instructions.
+
 ## Prerequisites
 
 - Docker

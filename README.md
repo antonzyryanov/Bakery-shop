@@ -14,24 +14,24 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
 
 <table>
  <tr>
-  <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_1.jpg" alt="Screenshot 1"></td>
+  <td><img src="screenshots/screenshot_2.jpg" alt="Screenshot 2"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_3.jpg" alt="Screenshot 3"></td>
+  <td><img src="screenshots/screenshot_4.jpg" alt="Screenshot 4"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_5.jpg" alt="Screenshot 5"></td>
+  <td><img src="screenshots/screenshot_6.jpg" alt="Screenshot 6"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_7.jpg" alt="Screenshot 7"></td>
+  <td><img src="screenshots/screenshot_8.jpg" alt="Screenshot 8"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_9.jpg" alt="Screenshot 9"></td>
+  <td><img src="screenshots/screenshot_10.jpg" alt="Screenshot 10"></td>
  </tr>
  <tr>
   <td><img src="screenshots/screenshot_11.jpg" alt="Screenshot 11"></td>
@@ -46,12 +46,16 @@ https://drive.google.com/drive/folders/1dsEt2c7almzm1bwLIdj7N55EChgjuDhk?usp=sha
   <td><img src="screenshots/screenshot_16.jpg" alt="Screenshot 16"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_17.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_18.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_17.jpg" alt="Screenshot 17"></td>
+  <td><img src="screenshots/screenshot_18.jpg" alt="Screenshot 18"></td>
  </tr>
  <tr>
-  <td><img src="screenshots/screenshot_19.jpg" alt="Screenshot 15"></td>
-  <td><img src="screenshots/screenshot_20.jpg" alt="Screenshot 16"></td>
+  <td><img src="screenshots/screenshot_19.jpg" alt="Screenshot 19"></td>
+  <td><img src="screenshots/screenshot_20.jpg" alt="Screenshot 20"></td>
+ </tr>
+ <tr>
+  <td><img src="screenshots/screenshot_21.jpg" alt="Screenshot 21"></td>
+  <td><img src="screenshots/screenshot_22.jpg" alt="Screenshot 22"></td>
  </tr>
 </table>
 
@@ -257,15 +261,16 @@ powershell -ExecutionPolicy Bypass -File .\scripts\minikube\test-load-balancing.
 What the script does:
 
 1. Checks that `node-api` and `nutrition-api` each have **2 Ready** pods
-2. Starts a temporary in-cluster `curl` pod
-3. Sends many requests to each **Service** DNS name (real kube-proxy load balancing)
-4. Reads the `instance` field (pod name) from each response
-5. Prints per-instance hit counts and **PASS** if ≥ 2 distinct instances answered
+2. Copies a tiny probe script into an existing pod (`kubectl cp`)
+3. Runs it with `kubectl exec` against Service DNS (`http://node-api:4000`, `http://nutrition-api:8000`)
+4. Reads `instance` (pod name) hit counts
+5. Prints **PASS** if ≥ 2 distinct instances answered
 
-Why not host NodePort / `kubectl port-forward`?
-- On Minikube **Docker Desktop (Windows)**, `http://<minikube-ip>:30080` is often unreachable from PowerShell.
-- `kubectl port-forward` often sticks to a single backend pod.
-- In-cluster Service DNS is the reliable way to prove round-robin on this setup.
+Why this approach?
+- Host NodePort via `minikube ip` is often unreachable on Docker Desktop Windows
+- `kubectl run --rm` / shell quoting is fragile in PowerShell
+- Executing from an already-running pod is reliable and still uses real Service load balancing
+
 
 Optional host smoke checks after the script:
 

@@ -109,7 +109,11 @@ const csrfUnlessBearer = (req, res, next) => {
 };
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({
+    status: 'ok',
+    service: 'node-api',
+    instance: process.env.HOSTNAME || 'unknown'
+  });
 });
 
 app.use('/api/security', csrfProtection, securityRoutes);
